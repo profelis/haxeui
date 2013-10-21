@@ -9,6 +9,7 @@ import haxe.ui.toolkit.core.interfaces.IDisplayObjectContainer;
 import haxe.ui.toolkit.core.interfaces.IDrawable;
 import haxe.ui.toolkit.core.interfaces.IEventDispatcher;
 import haxe.ui.toolkit.core.interfaces.InvalidationFlag;
+import haxe.ui.toolkit.events.UIEvent;
 
 class DisplayObject implements IEventDispatcher implements IDisplayObject implements IDrawable {
 	// used in IDisplayObject getters/setters
@@ -55,7 +56,7 @@ class DisplayObject implements IEventDispatcher implements IDisplayObject implem
 		initialize();
 		invalidate();
 		
-		var event:Event =  new Event(Event.INIT);
+		var event:UIEvent =  new UIEvent(UIEvent.INIT);
 		dispatchEvent(event);
 	}
 	
@@ -141,7 +142,7 @@ class DisplayObject implements IEventDispatcher implements IDisplayObject implem
 		if (_parent != null) {
 			_parent.invalidate(InvalidationFlag.LAYOUT);
 		}
-		var event:Event =  new Event(Event.RESIZE);
+		var event:UIEvent =  new UIEvent(UIEvent.RESIZE);
 		dispatchEvent(event);
 		
 		return value;
@@ -162,7 +163,7 @@ class DisplayObject implements IEventDispatcher implements IDisplayObject implem
 		if (_parent != null) {
 			_parent.invalidate(InvalidationFlag.LAYOUT);
 		}
-		var event:Event =  new Event(Event.RESIZE);
+		var event:UIEvent =  new UIEvent(UIEvent.RESIZE);
 		dispatchEvent(event);
 		
 		return value;
@@ -308,6 +309,7 @@ class DisplayObject implements IEventDispatcher implements IDisplayObject implem
 	}
 	
 	public function dispatchEvent(event:Event):Bool {
+		if (Std.is(event, UIEvent)) cast(event, UIEvent).displayObject = this;
 		return _sprite.dispatchEvent(event);
 	}
 	
