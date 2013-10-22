@@ -3,6 +3,7 @@ package haxe.ui.toolkit.core;
 import flash.display.Graphics;
 import flash.display.Sprite;
 import flash.events.Event;
+import flash.events.MouseEvent;
 import haxe.ds.StringMap;
 import haxe.ui.toolkit.core.interfaces.IDisplayObject;
 import haxe.ui.toolkit.core.interfaces.IDisplayObjectContainer;
@@ -29,6 +30,23 @@ class DisplayObject implements IEventDispatcher implements IDisplayObject implem
 	private var _valign:String = "center";
 
 	private var _eventListeners:StringMap < List < Dynamic->Void >> ;
+	static private var eventBindings:Map < String, String > = [
+		MouseEvent.CLICK => UIEvent.CLICK,
+		MouseEvent.MOUSE_DOWN => UIEvent.MOUSE_DOWN,
+		MouseEvent.MOUSE_UP => UIEvent.MOUSE_UP,
+		MouseEvent.MOUSE_MOVE => UIEvent.MOUSE_MOVE,
+		MouseEvent.MOUSE_OUT => UIEvent.MOUSE_OUT,
+		MouseEvent.MOUSE_OVER => UIEvent.MOUSE_OVER,
+		MouseEvent.DOUBLE_CLICK => UIEvent.DOUBLE_CLICK,
+		MouseEvent.ROLL_OVER => UIEvent.ROLL_OVER,
+		MouseEvent.ROLL_OUT => UIEvent.ROLL_OUT,
+		Event.ADDED => UIEvent.ADDED,
+		Event.ADDED_TO_STAGE => UIEvent.ADDED_TO_STAGE,
+		Event.REMOVED => UIEvent.REMOVED,
+		Event.REMOVED_FROM_STAGE => UIEvent.REMOVED_FROM_STAGE,
+		Event.ACTIVATE => UIEvent.ACTIVATE,
+		Event.DEACTIVATE => UIEvent.DEACTIVATE
+	];
 	
 	public function new() {
 		_sprite = new Sprite();
@@ -40,6 +58,13 @@ class DisplayObject implements IEventDispatcher implements IDisplayObject implem
 	// Overridables
 	//******************************************************************************************
 	private function preInitialize():Void {
+		for (type in eventBindings.keys()) {
+			addEventListener(type, bindEvent);
+		}
+	}
+	
+	private function bindEvent(event:Event) {
+		dispatchEvent(new UIEvent(eventBindings[event.type]));
 	}
 	
 	private function initialize():Void {
